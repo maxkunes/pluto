@@ -19,8 +19,6 @@ public:
 
 	explicit instruction_parser(const byte_array4& instruction) :
 		byte_array(instruction),
-		format(instruction_format::invalid),
-		type(instruction_type::invalid),
 		rs(reg_type::invalid),
 		rt(reg_type::invalid),
 		rd(reg_type::invalid),
@@ -53,8 +51,7 @@ public:
 		rd							= reg_type_from_index(to_uint32(15, 11));
 		shamt						= to_uint32(10, 6);
 		
-		format = instruction_format::format_r;
-		type = function_to_instruction_type(function);
+		info = get_instruction_info(0x0, function);
 	}
 
 	void parse_ij_type_instruction()
@@ -64,11 +61,26 @@ public:
 		rt							= reg_type_from_index(to_uint32(20, 16));
 		rd							= reg_type_from_index(to_uint32(15, 11));
 
-		format = is_valid_j_type(opcode) ? instruction_format::format_j : instruction_format::format_i;
-		type = opcode_to_instruction_type(opcode);
+		info = get_instruction_info(opcode, 0x0);
+
+		if(info->format == instruction_format::format_i)
+		{
+			imm = to_uint32(15, 0);
+		}
+		else
+		{
+			imm = to_uint32(25, 0);
+		}
+	}
+
+
+	std::string disassemble() const
+	{
+		return info->pretty_print(fmt::format("${}", to_string(rs)), fmt::format("${}", to_string(rt)), fmt::format("${}", to_string(rd)), std::to_string(imm), std::to_string(shamt));
 	}
 	
-	std::uint32_t to_uint32(const std::uint32_t first_pos, const std::uint32_t last_pos) 
+	
+	std::uint32_t to_uint32(const std::uint32_t first_pos, const std::uint32_t last_pos) const
 	{
 		const std::uint32_t sll = 31 - first_pos;
 		const std::uint32_t srl = last_pos + (sll) ;
@@ -77,7 +89,7 @@ public:
 		return out;
 	}
 	
-	std::uint32_t to_uint32()
+	std::uint32_t to_uint32() const
 	{
 		std::uint32_t out = 0x0;
 		std::uint32_t data = 0x0;
@@ -98,9 +110,7 @@ public:
 	}
 	
 	byte_array4				byte_array;
-	instruction_format		format;
-	instruction_type		type;
-
+	std::shared_ptr<instruction_info> info;
 	reg_type rs;
 	reg_type rt;
 	reg_type rd;
@@ -110,40 +120,7 @@ public:
 
 inline std::string disassemble(const byte_array4& instruction)
 {
-	instruction_parser parsed(instruction);
+	const instruction_parser parsed(instruction);
 
-	std::stringstream stream;
-	
-	if(parsed.format == instruction_format::format_r)
-	{
-		stream << to_string(parsed.type) << " ";
-
-		bool need_comma = false;
-		
-		if (parsed.rd != reg_type::invalid) {
-			stream << "$" << to_string(parsed.rd);
-			need_comma = true;
-		}
-			
-		if (parsed.rt != reg_type::invalid) {
-
-			if (need_comma)
-				stream << ", ";
-			
-			stream << "$" << to_string(parsed.rt);
-			need_comma = true;
-		}
-		
-		if (parsed.rs != reg_type::invalid) {
-			
-			if (need_comma)
-				stream << ", ";
-			
-			stream << "$" << to_string(parsed.rs);
-			need_comma = true;
-		}
-		
-	}
-
-	return stream.str(); 
+	return parsed.disassemble();
 }

@@ -38,6 +38,7 @@ enum class reg_type : std::uint8_t
 	ra,
 };
 
+
 inline const char* to_string(const reg_type e)
 {
 	switch (e)

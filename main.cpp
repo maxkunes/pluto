@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 {
 	process_command_line(argc, argv);
 
-	byte_array4 add = { 2, 0x32, 0x80, 0x20 };
+	byte_array4 add = { 0x39, 0x49, 00, 0x05 };
 	
 	spdlog::info("{}", disassemble(add));
 	
