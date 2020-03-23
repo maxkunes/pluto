@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <unordered_map>
 #include <fmt/format.h>
 
 enum class instruction_format
@@ -61,6 +62,19 @@ public:
 			imm_pos(imm_pos),
 			shamt_pos(shamt_pos)
 	{
+	}
+
+	std::size_t count() const
+	{
+		std::size_t c = 0;
+
+		if (rs_pos != operand_order_pos::pos_invalid) c++;
+		if (rt_pos != operand_order_pos::pos_invalid) c++;
+		if (rd_pos != operand_order_pos::pos_invalid) c++;
+		if (imm_pos != operand_order_pos::pos_invalid) c++;
+		if (shamt_pos != operand_order_pos::pos_invalid) c++;
+
+		return c;
 	}
 
 	operand_order_pos rs_pos;
@@ -212,9 +226,11 @@ inline const char* to_string(const instruction_type e)
 	case instruction_type::type_sb: return "sb";
 	case instruction_type::type_sh: return "sh";
 	case instruction_type::type_sw: return "sw";
-	default: return "invalid";
+	default: return "unknown";
 	}
 }
+
+
 
 
 
@@ -923,10 +939,84 @@ static std::shared_ptr<instruction_info> info_sw = std::make_shared<instruction_
 	order_rt_imm_rs
 	);
 
+
+/*
+ * for(auto& i : r_instruction_info)
+	{
+		std::cout << fmt::format("{{\"{}\", info_{}}},", to_string(i.second->type), to_string(i.second->type));
+		std::cout << std::endl;
+	}
+
+	for (auto& i : j_instruction_info)
+	{
+		std::cout << fmt::format("{{\"{}\", info_{}}},", to_string(i.second->type), to_string(i.second->type));
+		std::cout << std::endl;
+	}
+
+	for (auto& i : i_instruction_info)
+	{
+		std::cout << fmt::format("{{\"{}\", info_{}}},", to_string(i.second->type), to_string(i.second->type));
+		std::cout << std::endl;
+	}
+
+ */
+
+static std::unordered_map<std::string, std::shared_ptr<instruction_info>> mnemonic_to_instruction = {
+	{"jr", info_jr},
+	{"sll", info_sll},
+	{"srl", info_srl},
+	{"sra", info_sra},
+	{"sllv", info_sllv},
+	{"srlv", info_srlv},
+	{"srav", info_srav},
+	{"jalr", info_jalr},
+	{"syscall", info_syscall},
+	{"mfhi", info_mfhi},
+	{"mthi", info_mthi},
+	{"mflo", info_mflo},
+	{"mtlo", info_mtlo},
+	{"mult", info_mult},
+	{"multu", info_multu},
+	{"div", info_div},
+	{"divu", info_divu},
+	{"add", info_add},
+	{"addu", info_addu},
+	{"sub", info_sub},
+	{"subu", info_subu},
+	{"and", info_and},
+	{"or", info_or},
+	{"xor", info_xor},
+	{"nor", info_nor},
+	{"slt", info_slt},
+	{"sltu", info_sltu},
+	{"j", info_j},
+	{"jal", info_jal},
+	{"beq", info_beq},
+	{"bne", info_bne},
+	{"blez", info_blez},
+	{"bgtz", info_bgtz},
+	{"addi", info_addi},
+	{"addiu", info_addiu},
+	{"slti", info_slti},
+	{"sltiu", info_sltiu},
+	{"andi", info_andi},
+	{"ori", info_ori},
+	{"xori", info_xori},
+	{"lui", info_lui},
+	{"lb", info_lb},
+	{"lh", info_lh},
+	{"lw", info_lw},
+	{"lbu", info_lbu},
+	{"lhu", info_lhu},
+	{"sb", info_sb},
+	{"sh", info_sh},
+	{"sw", info_sw}
+};
+
 /*
  * key = instruction function field
 */
-std::map<std::uint8_t, std::shared_ptr<instruction_info>> r_instruction_info = {
+static std::unordered_map<std::uint8_t, std::shared_ptr<instruction_info>> r_instruction_info = {
 
 	{info_sll->opcode_function, info_sll},
 	{info_srl->opcode_function, info_srl},
@@ -961,7 +1051,7 @@ std::map<std::uint8_t, std::shared_ptr<instruction_info>> r_instruction_info = {
 /*
  * key = instruction opcode field
 */
-std::map<std::uint8_t, std::shared_ptr<instruction_info>> j_instruction_info = {
+static std::unordered_map<std::uint8_t, std::shared_ptr<instruction_info>> j_instruction_info = {
 
 	{info_j->opcode_function, info_j},
 	{info_jal->opcode_function, info_jal}
@@ -970,7 +1060,7 @@ std::map<std::uint8_t, std::shared_ptr<instruction_info>> j_instruction_info = {
 /*
  * key = instruction opcode field
 */
-std::map<std::uint8_t, std::shared_ptr<instruction_info>> i_instruction_info = {
+static std::unordered_map<std::uint8_t, std::shared_ptr<instruction_info>> i_instruction_info = {
 
 	{info_beq->opcode_function, info_beq},
 	{info_bne->opcode_function, info_bne},
