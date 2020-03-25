@@ -76,7 +76,8 @@ public:
 
 	std::string disassemble() const
 	{
-		return info->pretty_print(fmt::format("${}", to_string(rs)), fmt::format("${}", to_string(rt)), fmt::format("${}", to_string(rd)), std::to_string(imm), std::to_string(shamt));
+		//return info->pretty_print(fmt::format("${}", to_string(rs)), fmt::format("${}", to_string(rt)), fmt::format("${}", to_string(rd)), std::to_string(imm), std::to_string(shamt));
+		return "";
 	}
 	
 	

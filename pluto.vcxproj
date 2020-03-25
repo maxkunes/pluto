@@ -151,10 +151,15 @@
   <ItemGroup>
     <ClInclude Include="assembler.hpp" />
     <ClInclude Include="disassembler.hpp" />
+    <ClInclude Include="cpu.hpp" />
+    <ClInclude Include="fnv1a.hpp" />
+    <ClInclude Include="il.hpp" />
     <ClInclude Include="instruction.hpp" />
+    <ClInclude Include="mips_il.hpp" />
     <ClInclude Include="mips_tokenizer.hpp" />
     <ClInclude Include="register.hpp" />
     <ClInclude Include="settings.hpp" />
+    <ClInclude Include="state.hpp" />
     <ClInclude Include="tokenizer.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

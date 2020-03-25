@@ -38,10 +38,25 @@
     <ClInclude Include="tokenizer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mips_tokenizer.hpp">
+      <Filter>Header Files\mips</Filter>
+    </ClInclude>
+    <ClInclude Include="il.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fnv1a.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="assembler.hpp">
       <Filter>Header Files\mips</Filter>
     </ClInclude>
-    <ClInclude Include="mips_tokenizer.hpp">
+    <ClInclude Include="cpu.hpp">
+      <Filter>Header Files\mips</Filter>
+    </ClInclude>
+    <ClInclude Include="state.hpp">
+      <Filter>Header Files\mips</Filter>
+    </ClInclude>
+    <ClInclude Include="mips_il.hpp">
       <Filter>Header Files\mips</Filter>
     </ClInclude>
   </ItemGroup>

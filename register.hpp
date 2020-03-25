@@ -1,9 +1,13 @@
 #pragma once
 #include <iostream>
+#include <frozen/unordered_map.h>
+#include <frozen/string.h>
 
-enum class reg_type : std::uint8_t
+#include "fnv1a.hpp"
+
+enum class reg_type : std::int8_t
 {
-	invalid,
+	invalid = -1,
 	zero,
 	at,
 	v0,
@@ -39,70 +43,127 @@ enum class reg_type : std::uint8_t
 };
 
 
-inline const char* to_string(const reg_type e)
-{
-	switch (e)
+/*
+ *
+ *	for(int i = (int)reg_type::invalid; i<= (int)reg_type::ra; i++)
 	{
-	case reg_type::invalid: return "invalid";
-	case reg_type::zero: return "zero";
-	case reg_type::at: return "at";
-	case reg_type::v0: return "v0";
-	case reg_type::v1: return "v1";
-	case reg_type::a0: return "a0";
-	case reg_type::a1: return "a1";
-	case reg_type::a2: return "a2";
-	case reg_type::a3: return "a3";
-	case reg_type::t0: return "t0";
-	case reg_type::t1: return "t1";
-	case reg_type::t2: return "t2";
-	case reg_type::t3: return "t3";
-	case reg_type::t4: return "t4";
-	case reg_type::t5: return "t5";
-	case reg_type::t6: return "t6";
-	case reg_type::t7: return "t7";
-	case reg_type::s0: return "s0";
-	case reg_type::s1: return "s1";
-	case reg_type::s2: return "s2";
-	case reg_type::s3: return "s3";
-	case reg_type::s4: return "s4";
-	case reg_type::s5: return "s5";
-	case reg_type::s6: return "s6";
-	case reg_type::s7: return "s7";
-	case reg_type::t8: return "t8";
-	case reg_type::t9: return "t9";
-	case reg_type::k0: return "k0";
-	case reg_type::k1: return "k1";
-	case reg_type::gp: return "gp";
-	case reg_type::sp: return "sp";
-	case reg_type::fp: return "fp";
-	case reg_type::ra: return "ra";
-	default: return "invalid";
+		std::string name = to_string(reg_type(i));
+
+		std::cout << fmt::format("{{{}, \"{}\"}},",  i - 1, name) << std::endl;
 	}
+	
+ * 
+ */
+
+
+static constexpr frozen::unordered_map<reg_type, const char*, 33> reg_type_to_string = {
+	{reg_type::invalid, "invalid"},
+	{reg_type::zero, "zero"},
+	{reg_type::at, "at"},
+	{reg_type::v0, "v0"},
+	{reg_type::v1, "v1"},
+	{reg_type::a0, "a0"},
+	{reg_type::a1, "a1"},
+	{reg_type::a2, "a2"},
+	{reg_type::a3, "a3"},
+	{reg_type::t0, "t0"},
+	{reg_type::t1, "t1"},
+	{reg_type::t2, "t2"},
+	{reg_type::t3, "t3"},
+	{reg_type::t4, "t4"},
+	{reg_type::t5, "t5"},
+	{reg_type::t6, "t6"},
+	{reg_type::t7, "t7"},
+	{reg_type::s0, "s0"},
+	{reg_type::s1, "s1"},
+	{reg_type::s2, "s2"},
+	{reg_type::s3, "s3"},
+	{reg_type::s4, "s4"},
+	{reg_type::s5, "s5"},
+	{reg_type::s6, "s6"},
+	{reg_type::s7, "s7"},
+	{reg_type::t8, "t8"},
+	{reg_type::t9, "t9"},
+	{reg_type::k0, "k0"},
+	{reg_type::k1, "k1"},
+	{reg_type::gp, "gp"},
+	{reg_type::sp, "sp"},
+	{reg_type::fp, "fp"},
+	{reg_type::ra, "ra"}
+};
+
+
+
+/*
+		for (int i = (int)reg_type::invalid; i <= (int)reg_type::ra; i++)
+	{
+		std::string name = reg_type_to_string.at((reg_type)i);
+
+		std::cout << fmt::format("{{fnv1a(\"{}\"), reg_type::{}}},", name.c_str(), name) << std::endl;
+	}
+
+ */
+
+static const frozen::unordered_map<std::uint64_t, reg_type, 33> reg_hash_to_type = {
+	{fnv1a("invalid"), reg_type::invalid},
+	{fnv1a("zero"), reg_type::zero},
+	{fnv1a("at"), reg_type::at},
+	{fnv1a("v0"), reg_type::v0},
+	{fnv1a("v1"), reg_type::v1},
+	{fnv1a("a0"), reg_type::a0},
+	{fnv1a("a1"), reg_type::a1},
+	{fnv1a("a2"), reg_type::a2},
+	{fnv1a("a3"), reg_type::a3},
+	{fnv1a("t0"), reg_type::t0},
+	{fnv1a("t1"), reg_type::t1},
+	{fnv1a("t2"), reg_type::t2},
+	{fnv1a("t3"), reg_type::t3},
+	{fnv1a("t4"), reg_type::t4},
+	{fnv1a("t5"), reg_type::t5},
+	{fnv1a("t6"), reg_type::t6},
+	{fnv1a("t7"), reg_type::t7},
+	{fnv1a("s0"), reg_type::s0},
+	{fnv1a("s1"), reg_type::s1},
+	{fnv1a("s2"), reg_type::s2},
+	{fnv1a("s3"), reg_type::s3},
+	{fnv1a("s4"), reg_type::s4},
+	{fnv1a("s5"), reg_type::s5},
+	{fnv1a("s6"), reg_type::s6},
+	{fnv1a("s7"), reg_type::s7},
+	{fnv1a("t8"), reg_type::t8},
+	{fnv1a("t9"), reg_type::t9},
+	{fnv1a("k0"), reg_type::k0},
+	{fnv1a("k1"), reg_type::k1},
+	{fnv1a("gp"), reg_type::gp},
+	{fnv1a("sp"), reg_type::sp},
+	{fnv1a("fp"), reg_type::fp},
+	{fnv1a("ra"), reg_type::ra},
+};
+
+template<typename T, typename std::enable_if_t<std::is_integral<T>::value>* = nullptr>
+reg_type reg_type_from_index(const T& index)
+{
+	return static_cast<reg_type>(index);
 }
 
-inline reg_type reg_type_from_index(const std::uint8_t index)
-{
-	if(index <= static_cast<std::uint8_t>(reg_type::ra) - 1)
-	{
-		return static_cast<reg_type>(index + 1);
-	}
 
-	return reg_type::invalid;
-}
-
-enum class reg_usage
+enum class reg_usage : std::uint8_t
 {
 	reserved,
 	read,
 	write,
-	readwrite
 };
+
+inline reg_usage operator|(reg_usage a, reg_usage b)
+{
+	return static_cast<reg_usage>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 class reg
 {
 public:
 
-	reg(const reg_usage usage, const std::uint32_t default_value) : usage(usage), default_value(default_value)
+	reg(const std::uint32_t default_value = 0x0, const reg_usage usage = reg_usage::read | reg_usage::write) :  default_value(default_value), usage(usage), value(default_value)
 	{
 		
 	}
