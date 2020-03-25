@@ -52,7 +52,7 @@ inline mips_token_vector mips_tokenize(const std::string& raw)
 	return tokenize<mips_token_type, mips_token>(raw, tokens, { mips_token_type::space });
 }
 
-mips_token pop_front_token(mips_token_vector& tokens)
+inline mips_token pop_front_token(mips_token_vector& tokens)
 {
 	if (tokens.size() == 0) return mips_token(mips_token_type::invalid, "invalid");
 

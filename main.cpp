@@ -2,6 +2,7 @@
 #include <CLI11.hpp>
 
 #include "assembler.hpp"
+#include "cpu.hpp"
 #include "settings.hpp"
 #include "disassembler.hpp"
 #include "tokenizer.hpp"
@@ -16,10 +17,15 @@ int main(int argc, char* argv[])
 
 	auto info = get_instruction_info(0x0, 0x0);
 
+	auto cpu = mips_cpu();
+
+	
 	try {
 
-		assemble("test");
-
+		const auto instructions = mips_il_assemble(std::array<std::string, 3>{ "li $t0, 55", "li $t1, 1", "add $t0, $t0, $t1" });
+		
+		
+		cpu.emulate(instructions);
 	}
 	catch(const std::exception& ex)
 	{

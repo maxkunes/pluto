@@ -5,6 +5,7 @@
 #include "instruction.hpp"
 #include "fnv1a.hpp"
 #include "il.hpp"
+#include "mips_il.hpp"
 #include "register.hpp"
 
 
@@ -35,48 +36,43 @@ void assemble_loadi(mips_token_vector& tokens, instruction_vector& instructions)
 void assemble_syscall(mips_token_vector& tokens, instruction_vector& instructions);
 void assemble_add(mips_token_vector& tokens, instruction_vector& instructions);
 
-inline void assemble(const std::string& input)
+template <std::uint32_t size>
+inline instruction_vector mips_il_assemble(const std::array<std::string, size>& lines)
 {
-	for (int i = (int)reg_type::invalid; i <= (int)reg_type::ra; i++)
-	{
-		std::string name = reg_type_to_string.at(reg_type(i));
-
-		std::cout << fmt::format("reg {};", name) << std::endl;
-	}
-
-	
 	instruction_vector instructions;
-	
-	auto tokens = mips_tokenize("syscall");
 
-	if (tokens.begin() == tokens.end())
-		throw std::exception("input missing mnemonic");
+	for (auto& line : lines) {
+
+		auto tokens = mips_tokenize(line);
+
+		if (tokens.begin() == tokens.end())
+			throw std::exception("input missing mnemonic");
 
 
-	const auto mnemonic_str = pop_front_token(tokens).text;
-	const auto mnemonic = fnv1a(mnemonic_str.c_str());
-	
-	switch (mnemonic)
-	{
-	case fnv1a("move"):
-		assemble_move(tokens, instructions);
-		break;
-	case fnv1a("li"):
-		assemble_loadi(tokens, instructions);
-		break;
-	case fnv1a("syscall"):
-		assemble_syscall(tokens, instructions);
-		break;
-	case fnv1a("add"):
-		assemble_add(tokens, instructions);
-		break;
-	default:
-		throw std::exception(fmt::format("mnemonic {} not recognized", mnemonic_str).c_str());
+		const auto mnemonic_str = pop_front_token(tokens).text;
+		const auto mnemonic = fnv1a(mnemonic_str.c_str());
+
+		switch (mnemonic)
+		{
+		case fnv1a("move"):
+			assemble_move(tokens, instructions);
+			break;
+		case fnv1a("li"):
+			assemble_loadi(tokens, instructions);
+			break;
+		case fnv1a("syscall"):
+			assemble_syscall(tokens, instructions);
+			break;
+		case fnv1a("add"):
+			assemble_add(tokens, instructions);
+			break;
+		default:
+			throw std::exception(fmt::format("mnemonic {} not recognized", mnemonic_str).c_str());
+		}
+
 	}
-	
 
-
-	std::cout << "" << std::endl;
+	return instructions;
 }
 
 void assemble_move(mips_token_vector& tokens, instruction_vector& instructions)
@@ -104,7 +100,7 @@ void assemble_move(mips_token_vector& tokens, instruction_vector& instructions)
 	auto src_operand = make_reg_operand(src.text);
 	auto dst_operand = make_reg_operand(dst.text);
 
-	instructions.push_back(std::make_unique<il_movr>(std::move(dst_operand), std::move(src_operand)));
+	instructions.push_back(std::make_unique<mips_il_mov>(std::move(dst_operand), std::move(src_operand)));
 }
 
 void assemble_loadi(mips_token_vector& tokens, instruction_vector& instructions)
@@ -133,7 +129,7 @@ void assemble_loadi(mips_token_vector& tokens, instruction_vector& instructions)
 	auto src_operand = make_imm_operand(src.text);
 	auto dst_operand = make_reg_operand(dst.text);
 
-	instructions.push_back(std::make_unique<il_loadi>(std::move(dst_operand), std::move(src_operand)));
+	instructions.push_back(std::make_unique<mips_il_loadi>(std::move(dst_operand), std::move(src_operand)));
 }
 
 void assemble_syscall(mips_token_vector& tokens, instruction_vector& instructions)
@@ -181,5 +177,5 @@ void assemble_add(mips_token_vector& tokens, instruction_vector& instructions)
 	auto src_b_operand = make_reg_operand(src_b.text);
 	auto dst_operand = make_reg_operand(dst.text);
 
-	instructions.push_back(std::make_unique<il_addr>(std::move(dst_operand), std::move(src_a_operand), std::move(src_b_operand)));
+	instructions.push_back(std::make_unique<mips_il_add>(std::move(dst_operand), std::move(src_a_operand), std::move(src_b_operand)));
 }

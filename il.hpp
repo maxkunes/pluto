@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 
+
 enum class il_operand_type
 {
 	type_invalid,
@@ -43,7 +44,9 @@ inline operand_pointer make_operand(const std::uint64_t value, const il_operand_
 class il_instruction
 {
 public:
+	virtual ~il_instruction() = default;
 	il_instruction(std::string mnemonic = "il_instruction") : mnemonic(std::move(mnemonic)) {}
+
 	
 	operand_vector	operands;
 	std::string		mnemonic;

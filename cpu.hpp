@@ -4,10 +4,20 @@
 
 class mips_cpu
 {
-	void emulate(const instruction_vector& vector)
+public:
+
+	
+	void emulate(const instruction_vector& instructions)
 	{
-		
+		for (auto& instruction : instructions) {
+
+			auto mips_instruction = dynamic_cast<mips_il*>(instruction.get());
+
+			mips_instruction->emulate(state);
+
+			continue;
+		}
 	}
 private:
-	cpu_state_pointer state;
+	cpu_state state;
 };
